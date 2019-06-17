@@ -93,9 +93,9 @@ class FilterPrunner:
 
 	def normalize_ranks_per_layer(self):
 		for i in self.filter_ranks:
-			v = torch.abs(self.filter_ranks[i])
+			v = torch.abs(self.filter_ranks[i]).cpu()
 			v = v / np.sqrt(torch.sum(v * v))
-			self.filter_ranks[i] = v.cpu()
+			self.filter_ranks[i] = v
 
 	def get_prunning_plan(self, num_filters_to_prune):
 		filters_to_prune = self.lowest_ranking_filters(num_filters_to_prune)
@@ -122,8 +122,8 @@ class FilterPrunner:
 
 class PrunningFineTuner_VGG16:
 	def __init__(self, train_path, test_path, model):
-		self.train_data_loader = dataset.loader(train_path, batch_size=100)
-		self.test_data_loader = dataset.test_loader(test_path, batch_size=100)
+		self.train_data_loader = dataset.loader(train_path, batch_size=32)
+		self.test_data_loader = dataset.test_loader(test_path, batch_size=32)
 
 		self.model = model
 		self.criterion = torch.nn.CrossEntropyLoss()

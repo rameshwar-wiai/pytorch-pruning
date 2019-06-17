@@ -11,17 +11,19 @@ def replace_layers(model, i, indexes, layers):
 	return model[i]
 
 def prune_vgg16_conv_layer(model, layer_index, filter_index):
-	_, conv = model.features._modules.items()[layer_index]
+	_, conv = list(model.features._modules.items())[layer_index]
 	next_conv = None
 	offset = 1
 
-	while layer_index + offset <  len(model.features._modules.items()):
-		res =  model.features._modules.items()[layer_index+offset]
+	while layer_index + offset <  len(list(model.features._modules.items())):
+		res =  list(model.features._modules.items())[layer_index+offset]
 		if isinstance(res[1], torch.nn.modules.conv.Conv2d):
 			next_name, next_conv = res
 			break
 		offset = offset + 1
-	
+
+	bias_param = True if conv.bias is not None else False
+
 	new_conv = \
 		torch.nn.Conv2d(in_channels = conv.in_channels, \
 			out_channels = conv.out_channels - 1,
@@ -30,7 +32,7 @@ def prune_vgg16_conv_layer(model, layer_index, filter_index):
 			padding = conv.padding,
 			dilation = conv.dilation,
 			groups = conv.groups,
-			bias = conv.bias)
+			bias = bias_param)
 
 	old_weights = conv.weight.data.cpu().numpy()
 	new_weights = new_conv.weight.data.cpu().numpy()
@@ -47,6 +49,8 @@ def prune_vgg16_conv_layer(model, layer_index, filter_index):
 	new_conv.bias.data = torch.from_numpy(bias).cuda()
 
 	if not next_conv is None:
+		bias_param = True if next_conv.bias is not None else False
+
 		next_new_conv = \
 			torch.nn.Conv2d(in_channels = next_conv.in_channels - 1,\
 				out_channels =  next_conv.out_channels, \
@@ -55,7 +59,7 @@ def prune_vgg16_conv_layer(model, layer_index, filter_index):
 				padding = next_conv.padding,
 				dilation = next_conv.dilation,
 				groups = next_conv.groups,
-				bias = next_conv.bias)
+				bias = bias_param)
 
 		old_weights = next_conv.weight.data.cpu().numpy()
 		new_weights = next_new_conv.weight.data.cpu().numpy()
@@ -82,7 +86,7 @@ def prune_vgg16_conv_layer(model, layer_index, filter_index):
 					[new_conv]) for i, _ in enumerate(model.features)))
 		layer_index = 0
 		old_linear_layer = None
-		for _, module in model.classifier._modules.items():
+		for _, module in list(model.classifier._modules.items()):
 			if isinstance(module, torch.nn.Linear):
 				old_linear_layer = module
 				break
@@ -90,7 +94,7 @@ def prune_vgg16_conv_layer(model, layer_index, filter_index):
 
 		if old_linear_layer is None:
 			raise BaseException("No linear laye found in classifier")
-		params_per_input_channel = old_linear_layer.in_features / conv.out_channels
+		params_per_input_channel = old_linear_layer.in_features // conv.out_channels
 
 		new_linear_layer = \
 			torch.nn.Linear(old_linear_layer.in_features - params_per_input_channel, 
