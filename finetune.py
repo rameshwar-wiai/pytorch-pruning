@@ -37,6 +37,60 @@ class ModifiedVGG16Model(torch.nn.Module):
 		x = self.classifier(x)
 		return x
 
+'''Hack to create the new model based on the state dict
+'''
+class PrunedVGGModel(torch.nn.Module):
+	def __init__(self, state_dict):
+		# create the new layers based on the state dict
+		super(PrunedVGGModel, self).__init__()
+		self._make_layers(state_dict)
+
+	def forward(self, x):
+		x = self.features(x)
+		x = x.view(x.size(0), -1)
+		x = self.classifier(x)
+		return x
+
+	def _make_layers(self, state_dict):
+		feature_layers = []
+		classifier_layers = []
+		# first make the feature weights
+		#print(state_dict.keys())
+		prev_index = 0
+		for i, layer_name in enumerate(state_dict.keys()):
+			if i%2 == 1:
+				continue
+			print(layer_name)
+			layer_type, index, matrix_type = layer_name.strip().split('.')
+			index = int(index)
+			
+			if layer_type == 'features':
+				if index - prev_index == 3:
+					feature_layers += [nn.MaxPool2d(2, 2)]
+				prev_index = index
+				output_channels, input_channels, height, width = state_dict[layer_name].shape
+				conv2d = nn.Conv2d(input_channels, output_channels, kernel_size=3, padding=1)
+				conv2d.weight.data = state_dict[layer_name]
+				conv2d.bias.data = state_dict['.'.join([layer_type, str(index), 'bias'])]
+				feature_layers += [conv2d,  nn.ReLU(inplace=True)]
+
+			elif layer_type == 'classifier':
+				print(layer_name, state_dict[layer_name].shape)
+				output_dim, input_dim = state_dict[layer_name].shape
+				linear_layer = nn.Linear(output_dim, input_dim)
+				linear_layer.weight.data = state_dict[layer_name]
+				linear_layer.bias.data = state_dict['.'.join([layer_type, str(index), 'bias'])]
+				classifier_layers += [linear_layer, nn.ReLU(inplace=True)]
+			
+			else:
+				assert True, "No such layer name: " + layer_type
+
+		# the last MaxPool2d layer
+		feature_layers += [nn.MaxPool2d(2, 2)]
+		self.features = nn.Sequential(*feature_layers)
+		self.classifier = nn.Sequential(*classifier_layers)
+
+
 class FilterPrunner:
 	def __init__(self, model):
 		self.model = model
