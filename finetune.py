@@ -28,8 +28,10 @@ class ModifiedVGG16Model(torch.nn.Module):
 			param.requires_grad = False
 
 		self.classifier = nn.Sequential(
-			nn.Dropout(),
-			nn.Linear(25088, 10))
+			nn.Linear(25088, 4096),
+			nn.ReLU(inplace=True),
+			nn.Linear(4096, 10)
+			)
 
 	def forward(self, x):
 		x = self.features(x)
@@ -58,6 +60,7 @@ class PrunedVGGModel(torch.nn.Module):
 		#print(state_dict.keys())
 		prev_index = 0
 		for i, layer_name in enumerate(state_dict.keys()):
+			# only consider weights, we will consider biases along with them
 			if i%2 == 1:
 				continue
 			print(layer_name)
@@ -88,6 +91,8 @@ class PrunedVGGModel(torch.nn.Module):
 		# the last MaxPool2d layer
 		feature_layers += [nn.MaxPool2d(2, 2)]
 		self.features = nn.Sequential(*feature_layers)
+		# remove the last ReLU layer
+		classifier_layers = classifier_layers[:-1]
 		self.classifier = nn.Sequential(*classifier_layers)
 
 
@@ -262,8 +267,8 @@ class PrunningFineTuner_VGG16:
 
 		print("Number of prunning iterations to reduce 67% filters", iterations)
 
-		for _ in range(iterations):
-			print("Ranking filters.. ")
+		for i in range(iterations):
+			print("Ranking filters.. Iteration: ", str(i+1) , "/", str(iterations))
 			prune_targets = self.get_candidates_to_prune(num_filters_to_prune_per_iteration)
 			layers_prunned = {}
 			for layer_index, filter_index in prune_targets:
@@ -313,7 +318,7 @@ if __name__ == '__main__':
 	fine_tuner = PrunningFineTuner_VGG16(args.train_path, args.test_path, model)
 
 	if args.train:
-		fine_tuner.train(epoches = 5)
+		fine_tuner.train(epoches = 15)
 		torch.save(model, "model")
 
 	elif args.prune:

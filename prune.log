@@ -1,0 +1,77 @@
+Files already downloaded and verified
+Files already downloaded and verified
+Accuracy : 0.7542
+Number of prunning iterations to reduce 67% filters 5
+Ranking filters.. Iteration:  0 / 5
+Layers that will be prunned {21: 81, 28: 49, 17: 94, 10: 28, 24: 61, 14: 31, 12: 35, 26: 40, 5: 9, 19: 71, 7: 9, 0: 1, 2: 3}
+Prunning filters.. 
+Filters prunned 87.87878787878788%
+Accuracy : 0.5677
+Fine tuning to recover from prunning iteration.
+Epoch:  0
+Accuracy : 0.7555
+Epoch:  1
+Accuracy : 0.7685
+Epoch:  2
+Accuracy : 0.7801
+Finished fine tuning.
+Ranking filters.. Iteration:  1 / 5
+Layers that will be prunned {17: 59, 21: 75, 24: 61, 10: 23, 28: 75, 19: 81, 26: 53, 14: 23, 0: 8, 2: 8, 12: 24, 5: 10, 7: 12}
+Prunning filters.. 
+Filters prunned 75.75757575757575%
+Accuracy : 0.7032
+Fine tuning to recover from prunning iteration.
+Epoch:  0
+Accuracy : 0.7728
+Epoch:  1
+Accuracy : 0.7926
+Epoch:  2
+Accuracy : 0.7878
+Finished fine tuning.
+Ranking filters.. Iteration:  2 / 5
+Layers that will be prunned {19: 64, 24: 48, 21: 66, 12: 32, 5: 10, 17: 60, 28: 58, 14: 34, 10: 32, 26: 72, 0: 12, 7: 13, 2: 11}
+Prunning filters.. 
+Filters prunned 63.63636363636363%
+Accuracy : 0.6358
+Fine tuning to recover from prunning iteration.
+Epoch:  0
+Accuracy : 0.7773
+Epoch:  1
+Accuracy : 0.7861
+Epoch:  2
+Accuracy : 0.7975
+Finished fine tuning.
+Ranking filters.. Iteration:  3 / 5
+Layers that will be prunned {17: 57, 28: 78, 26: 69, 10: 28, 19: 65, 14: 29, 21: 51, 24: 81, 5: 17, 12: 20, 2: 4, 0: 2, 7: 11}
+Prunning filters.. 
+Filters prunned 51.515151515151516%
+Accuracy : 0.4196
+Fine tuning to recover from prunning iteration.
+Epoch:  0
+Accuracy : 0.7701
+Epoch:  1
+Accuracy : 0.7776
+Epoch:  2
+Accuracy : 0.7876
+Finished fine tuning.
+Ranking filters.. Iteration:  4 / 5
+Layers that will be prunned {28: 53, 5: 14, 26: 85, 21: 57, 12: 29, 2: 2, 17: 72, 24: 62, 10: 28, 19: 64, 14: 23, 7: 17, 0: 6}
+Prunning filters.. 
+Filters prunned 39.39393939393939%
+Accuracy : 0.2037
+Fine tuning to recover from prunning iteration.
+Epoch:  0
+Accuracy : 0.7689
+Epoch:  1
+Accuracy : 0.7808
+Epoch:  2
+Accuracy : 0.7683
+Finished fine tuning.
+Finished. Going to fine tune the model a bit more
+Epoch:  0
+Accuracy : 0.7413
+Epoch:  1
+Accuracy : 0.7866
+Epoch:  2
+Accuracy : 0.7843
+Finished fine tuning.

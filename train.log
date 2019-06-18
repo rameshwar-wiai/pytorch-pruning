@@ -1,0 +1,33 @@
+Files already downloaded and verified
+Files already downloaded and verified
+Epoch:  0
+Accuracy : 0.6893
+Epoch:  1
+Accuracy : 0.7091
+Epoch:  2
+Accuracy : 0.7145
+Epoch:  3
+Accuracy : 0.7214
+Epoch:  4
+Accuracy : 0.7189
+Epoch:  5
+Accuracy : 0.7216
+Epoch:  6
+Accuracy : 0.7226
+Epoch:  7
+Accuracy : 0.7321
+Epoch:  8
+Accuracy : 0.7426
+Epoch:  9
+Accuracy : 0.7408
+Epoch:  10
+Accuracy : 0.7445
+Epoch:  11
+Accuracy : 0.7523
+Epoch:  12
+Accuracy : 0.7465
+Epoch:  13
+Accuracy : 0.7532
+Epoch:  14
+Accuracy : 0.749
+Finished fine tuning.
